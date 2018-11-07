@@ -1,0 +1,8 @@
+<h2>Edit profile details</h2>
+
+<form action="/employees/{{user._id}}/" method="post">
+Email: <input value= "{{user.email}}" type="text" name="email"> 
+Password: <input value= "{{user.password}}" type="text" name="password">
+Role: <input value= "{{user.role}}" type="text" name="role">  
+<button type="submit"> Confirm changes </button>
+</form>

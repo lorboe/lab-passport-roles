@@ -9,13 +9,17 @@ const mongoose     = require('mongoose');
 const logger       = require('morgan');
 const path         = require('path');
 
+const session    = require("express-session");
+const MongoStore = require('connect-mongo')(session);
+const flash      = require("connect-flash");
+    
 
-mongoose.Promise = Promise;
 mongoose
-  .connect('mongodb://localhost/lab-passport-roles', {useMongoClient: true})
-  .then(() => {
-    console.log('Connected to Mongo!')
-  }).catch(err => {
+  .connect('mongodb://localhost/lab-passport-roles', {useNewUrlParser: true})
+  .then(x => {
+    console.log(`Connected to Mongo! Database name: "${x.connections[0].name}"`)
+  })
+  .catch(err => {
     console.error('Error connecting to mongo', err)
   });
 
@@ -45,14 +49,40 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
 
 
+hbs.registerHelper('ifUndefined', (value, options) => {
+  if (arguments.length < 2)
+      throw new Error("Handlebars Helper ifUndefined needs 1 parameter");
+  if (typeof value !== undefined ) {
+      return options.inverse(this);
+  } else {
+      return options.fn(this);
+  }
+});
+  
 
 // default value for title local
 app.locals.title = 'Express - Generated with IronGenerator';
 
 
+// Enable authentication using session + passport
+app.use(session({
+  secret: 'irongenerator',
+  resave: true,
+  saveUninitialized: true,
+  store: new MongoStore( { mongooseConnection: mongoose.connection })
+}))
+app.use(flash());
+require('./passport')(app);
+    
+app.use((req,res, next) => {
+  res.locals.isConnected = !!req.user
+  res.locals.isBoss = req.user && req.user.role === "BOSS";
+  next() //to go the next middleware
+})
 
-const index = require('./routes/index');
-app.use('/', index);
-
+app.use('/',require('./routes/index'));
+app.use('/auth',require('./routes/auth'));
+app.use('/', require('./routes/workers'));
+      
 
 module.exports = app;

@@ -1,0 +1,12 @@
+
+  <h2>Your profile</h2>
+  
+ <ul>
+<li>Email:{{user.email}}</li>
+<li>Password:{{user.password}}</li>
+<li>Role:{{user.role}}</li>
+</ul>
+
+<form action="/profile/{{this._id}}/edit" method="get">
+  <button type="submit">Edit</button>
+  </form>

@@ -1,0 +1,19 @@
+<ul>
+  {{#each users}}
+  <li>
+    <a href="/employees/{{this._id}}">
+      {{this.email}}
+  </a>
+     <form action="/employees/{{this._id}}/delete">
+    <button type="submit">Delete</button>
+  </form>
+  <form action="/employees/{{this._id}}/edit" method="get">
+  <button type="submit">Edit</button>
+  </form>
+ </li>
+ {{/each}}
+</ul>
+
+  {{#if isBoss}}
+    <a href="/add-employee">Add employee</a>
+    {{/if}}
