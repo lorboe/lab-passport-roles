@@ -1,7 +1,8 @@
 <ul>
   {{#each users}}
   <li>
-    <a href="/employees/{{this._id}}">
+  {{#if ../isBoss}}
+   <a href="/employees/{{this._id}}">
       {{this.email}}
   </a>
      <form action="/employees/{{this._id}}/delete">
@@ -9,6 +10,9 @@
   </form>
   <form action="/employees/{{this._id}}/edit" method="get">
   <button type="submit">Edit</button>
+   {{else}}
+   {{this.email}}
+    {{/if}}
   </form>
  </li>
  {{/each}}

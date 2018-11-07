@@ -2,13 +2,24 @@ const express = require('express');
 const router  = express.Router();
 const User = require('../models/User');
 
-router.get('/add-employee', (req, res, next) => {
+
+function checkRole(role) {
+  return (req, res, next) => {
+    if(res.locals.isBoss) {
+      next()
+    }
+    else {
+      res.redirect('/')
+    }
+  }
+}
+router.get('/add-employee', checkRole('BOSS'), (req, res, next) => {
   //req.user is defined if the user is connected
   res.render('add-employee');
 });
 
 
-router.post('/add-employee', (req, res, next) => {
+router.post('/add-employee', checkRole('BOSS'),(req, res, next) => {
   User.create({
     email:req.body.email,
     password: req.body.password,
@@ -61,7 +72,7 @@ router.get('/profile', (req, res, next) => {
 
 //this is only for the boss
 
-router.get("/employees/:id", (req, res, next) => {
+router.get("/employees/:id", checkRole('BOSS'), (req, res, next) => {
   let id = req.params.id;
   User.findById(id)
     .then(usersFromDb => {
@@ -74,13 +85,13 @@ router.get("/employees/:id", (req, res, next) => {
     });
 });
 
-router.get("/employees/:id/edit", (req, res, next) => {
+router.get("/employees/:id/edit", checkRole('BOSS'), (req, res, next) => {
   User.findById(req.params.id).then(user => {
     res.render("edit", {user});
   });
 });
 
-router.post("/employee/:id/edit", (req, res, next) => {
+router.post("/employee/:id/edit",  checkRole('BOSS'), (req, res, next) => {
   User.findByIdAndUpdate(req.params.id, {
     email: req.body.email,
     password: req.body.password,
@@ -92,7 +103,7 @@ router.post("/employee/:id/edit", (req, res, next) => {
 
 
 //DELETION  MISSING TEH BOSS VALIDATION
-router.get('/employees/:id/delete', (req, res, next) => {
+router.get('/employees/:id/delete', checkRole('BOSS'),  (req, res, next) => {
   User.findByIdAndRemove(req.params.id)
     .then(user => {
       res.redirect('/employees')
