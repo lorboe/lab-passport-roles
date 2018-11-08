@@ -15,7 +15,7 @@ function checkRole(role) {
 }
 router.get('/add-employee', checkRole('BOSS'), (req, res, next) => {
   //req.user is defined if the user is connected
-  res.render('add-employee');
+  res.render('employee/add-employee');
 });
 
 
@@ -33,7 +33,7 @@ router.post('/add-employee', checkRole('BOSS'),(req, res, next) => {
 router.get('/employees', (req, res, next) => {
   User.find()
   .then(users =>{
-    res.render('employees', {users: users})
+    res.render('employee/employees', {users: users})
     console.log('users')
   })
 })
@@ -43,40 +43,18 @@ router.get('/employees', (req, res, next) => {
 router.get('/profile', (req, res, next) => {
   User.findById(req.user._id)
   .then(user =>{
-    res.render('profile', { 
-      // email: req.user.email,
-      // password: req.user.password,
-      // role: req.user.role
+    res.render('employee/profile', { 
       user
     })
   })
 })
 
-//THIS WAS TO CHECK WHETHER POPULATING THE PROFILE WORKED
-// router.get("/profile/:id/edit", (req, res, next) => {
-//   User.findById(req.params.id).then(user => {
-//     res.render("profile", {user});
-//   });
-// });
-
-// router.post("/profile/:id/edit", (req, res, next) => {
-//   User.findByIdAndUpdate(req.params.id, {
-//     email: req.user.email,
-//       password: req.user.password,
-//       role: req.user.role
-//   }).then(user => {
-//     res.redirect("/profile" + user._id);
-//   });
-// });
-
-
-//this is only for the boss
 
 router.get("/employees/:id", checkRole('BOSS'), (req, res, next) => {
   let id = req.params.id;
   User.findById(id)
     .then(usersFromDb => {
-      res.render("employee-details", {
+      res.render("employee/employee-details", {
         user: usersFromDb
       });
     })
@@ -87,7 +65,7 @@ router.get("/employees/:id", checkRole('BOSS'), (req, res, next) => {
 
 router.get("/employees/:id/edit", checkRole('BOSS'), (req, res, next) => {
   User.findById(req.params.id).then(user => {
-    res.render("edit", {user});
+    res.render("employee/edit", {user});
   });
 });
 

@@ -1,0 +1,25 @@
+<ul>
+  {{#each course}}
+  <li>
+  {{#if ../isTA}}
+   <a href="/{{this._id}}">
+      {{this.name}}
+  </a>
+     <form action="/{{this._id}}/delete">
+    <button type="submit">Delete</button>
+  </form>
+  <form action="/{{this._id}}/edit" method="get">
+  <button type="submit">Edit</button>
+   {{else}}
+   Name: {{this.name}}
+   Description: {{this.description}}
+
+    {{/if}}
+  </form>
+ </li>
+ {{/each}}
+</ul>
+
+  {{#if isTA}}
+    <a href="courses/add">Add Course</a>
+    {{/if}}

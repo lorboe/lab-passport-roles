@@ -77,12 +77,15 @@ require('./passport')(app);
 app.use((req,res, next) => {
   res.locals.isConnected = !!req.user
   res.locals.isBoss = req.user && req.user.role === "BOSS";
+  res.locals.isTA = req.user && req.user.role === "TA"
   next() //to go the next middleware
 })
 
 app.use('/',require('./routes/index'));
 app.use('/auth',require('./routes/auth'));
 app.use('/', require('./routes/workers'));
+app.use('/courses', require('./routes/courses'));
+
       
 
 module.exports = app;
